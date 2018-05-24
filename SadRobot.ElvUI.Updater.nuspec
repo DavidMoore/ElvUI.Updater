@@ -1,0 +1,33 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>ElvUIUpdater</id>
+        <version>1.0.1</version>
+        <title>ElvUI Updater</title>
+        <authors>Sad Robot</authors>
+        <owners>DavidMoore</owners>
+        <licenseUrl>https://www.sadrobot.co.nz/elvui/</licenseUrl>
+        <projectUrl>https://www.sadrobot.co.nz/elvui/</projectUrl>
+        <iconUrl>https://www.tukui.org/images/favicon.ico</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Utility for keeping your ElvUI WoW add-on up to date.</description>
+        <summary>Utility for keeping your ElvUI WoW add-on up to date.</summary>
+        <language>en-US</language>
+        <tags>wow elvui</tags>
+    </metadata>
+    <files>
+        <file src="bin\Release\DeltaCompressionDotNet.dll" target="lib\net45" />
+        <file src="bin\Release\DeltaCompressionDotNet.MsDelta.dll" target="lib\net45" />
+        <file src="bin\Release\DeltaCompressionDotNet.PatchApi.dll" target="lib\net45" />
+        <file src="bin\Release\ElvUI.Updater.exe" target="lib\net45" />
+        <file src="bin\Release\ElvUI.Updater.exe.config" target="lib\net45" />
+        <file src="bin\Release\Mono.Cecil.dll" target="lib\net45" />
+        <file src="bin\Release\Mono.Cecil.Mdb.dll" target="lib\net45" />
+        <file src="bin\Release\Mono.Cecil.Pdb.dll" target="lib\net45" />
+        <file src="bin\Release\Mono.Cecil.Rocks.dll" target="lib\net45" />
+        <file src="bin\Release\NuGet.Squirrel.dll" target="lib\net45" />
+        <file src="bin\Release\SharpCompress.dll" target="lib\net45" />
+        <file src="bin\Release\Splat.dll" target="lib\net45" />
+        <file src="bin\Release\Squirrel.dll" target="lib\net45" />
+    </files>
+</package>

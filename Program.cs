@@ -1,4 +1,8 @@
-﻿namespace ElvUI.Updater
+﻿using System.Diagnostics;
+using System.Net;
+using Squirrel;
+
+namespace ElvUI.Updater
 {
     using System;
     using System.IO;
@@ -11,9 +15,10 @@
     static class Program
     {
         static readonly Regex regex = new Regex(@"/downloads/elvui-([0-9]+\.[0-9]+).zip");
-
+        
         static void Main(string[] args)
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             MainAsync().GetAwaiter().GetResult();
         }
 
@@ -21,9 +26,22 @@
         {
             try
             {
+                Console.WriteLine("Checking for program updates...");
+                using (var manager = await UpdateManager.GitHubUpdateManager("https://github.com/DavidMoore/ElvUI.Updater", "ElvUI Updater"))
+                {
+                    await manager.UpdateApp(progress => Console.Write("\r{0}%", progress));
+                }
+            }
+            catch (Exception e)
+            {
+                Trace.TraceWarning("Error updating: " + e);
+            }
+
+            try
+            {
                 using (var client = new HttpClient())
                 {
-                    Console.WriteLine("Checking for ElVUI version...");
+                    Console.WriteLine("\r\nChecking for ElVUI version...");
 
                     var html = await client.GetStringAsync("https://www.tukui.org/download.php?ui=elvui");
 
@@ -38,7 +56,7 @@
                     using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
                     using (var key = hklm.OpenSubKey(@"SOFTWARE\Blizzard Entertainment\World of Warcraft"))
                     {
-                        installPath = (string) key?.GetValue("InstallPath") ?? throw new UpdateException("Couldn't find the World of Warcraft install information");
+                        installPath = (string)key?.GetValue("InstallPath") ?? throw new UpdateException("Couldn't find the World of Warcraft install information");
                     }
                     if (string.IsNullOrWhiteSpace(installPath)) throw new UpdateException("Couldn't locate the install path");
 
