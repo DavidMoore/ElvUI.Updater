@@ -1,17 +1,16 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 using System.Net;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Microsoft.Win32;
 using Squirrel;
 
-namespace ElvUI.Updater
+namespace SadRobot.ElvUI.Updater
 {
-    using System;
-    using System.IO;
-    using System.IO.Compression;
-    using System.Net.Http;
-    using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
-    using Microsoft.Win32;
-
     static class Program
     {
         static readonly Regex regex = new Regex(@"/downloads/elvui-([0-9]+\.[0-9]+).zip");
@@ -21,7 +20,7 @@ namespace ElvUI.Updater
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             MainAsync().GetAwaiter().GetResult();
         }
-
+        
         static async Task MainAsync()
         {
             try
@@ -29,12 +28,16 @@ namespace ElvUI.Updater
                 Console.WriteLine("Checking for program updates...");
                 using (var manager = await UpdateManager.GitHubUpdateManager("https://github.com/DavidMoore/ElvUI.Updater", "ElvUI Updater"))
                 {
-                    await manager.UpdateApp(progress => Console.Write("\r{0}%", progress));
+                    if (manager.IsInstalledApp)
+                    {
+                        await manager.UpdateApp(progress => Console.Write("\rUpdating: {0}%", progress));
+                        Console.WriteLine("\rUpdating: 100%");
+                    }
                 }
             }
             catch (Exception e)
             {
-                Trace.TraceWarning("Error updating: " + e);
+                Trace.TraceWarning("\rError updating: " + e);
             }
 
             try

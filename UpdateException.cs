@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace ElvUI.Updater
+namespace SadRobot.ElvUI.Updater
 {
     class UpdateException : Exception
     {

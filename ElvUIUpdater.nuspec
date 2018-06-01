@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>ElvUIUpdater</id>
-        <version>1.0.1</version>
+        <version>$version$</version>
         <title>ElvUI Updater</title>
         <authors>Sad Robot</authors>
         <owners>DavidMoore</owners>
@@ -16,18 +16,18 @@
         <tags>wow elvui</tags>
     </metadata>
     <files>
-        <file src="bin\Release\DeltaCompressionDotNet.dll" target="lib\net45" />
-        <file src="bin\Release\DeltaCompressionDotNet.MsDelta.dll" target="lib\net45" />
-        <file src="bin\Release\DeltaCompressionDotNet.PatchApi.dll" target="lib\net45" />
-        <file src="bin\Release\ElvUI.Updater.exe" target="lib\net45" />
-        <file src="bin\Release\ElvUI.Updater.exe.config" target="lib\net45" />
-        <file src="bin\Release\Mono.Cecil.dll" target="lib\net45" />
-        <file src="bin\Release\Mono.Cecil.Mdb.dll" target="lib\net45" />
-        <file src="bin\Release\Mono.Cecil.Pdb.dll" target="lib\net45" />
-        <file src="bin\Release\Mono.Cecil.Rocks.dll" target="lib\net45" />
-        <file src="bin\Release\NuGet.Squirrel.dll" target="lib\net45" />
-        <file src="bin\Release\SharpCompress.dll" target="lib\net45" />
-        <file src="bin\Release\Splat.dll" target="lib\net45" />
-        <file src="bin\Release\Squirrel.dll" target="lib\net45" />
+        <file src="DeltaCompressionDotNet.dll" target="lib\net45" />
+        <file src="DeltaCompressionDotNet.MsDelta.dll" target="lib\net45" />
+        <file src="DeltaCompressionDotNet.PatchApi.dll" target="lib\net45" />
+        <file src="ElvUIUpdater.exe" target="lib\net45" />
+        <file src="ElvUIUpdater.exe.config" target="lib\net45" />
+        <file src="Mono.Cecil.dll" target="lib\net45" />
+        <file src="Mono.Cecil.Mdb.dll" target="lib\net45" />
+        <file src="Mono.Cecil.Pdb.dll" target="lib\net45" />
+        <file src="Mono.Cecil.Rocks.dll" target="lib\net45" />
+        <file src="NuGet.Squirrel.dll" target="lib\net45" />
+        <file src="SharpCompress.dll" target="lib\net45" />
+        <file src="Splat.dll" target="lib\net45" />
+        <file src="Squirrel.dll" target="lib\net45" />
     </files>
 </package>
