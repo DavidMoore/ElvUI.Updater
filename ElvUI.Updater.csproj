@@ -91,7 +91,7 @@
     <PropertyGroup>
       <SquirrelVersion>$([System.Version]::Parse(%(squirrelVersion.Version)).ToString(3))</SquirrelVersion>
       <SquirrelArgs>--no-msi --no-delta --setupIcon=$(ProjectDir)$(ApplicationIcon) --releases-dir=$(ProjectDir)Releases</SquirrelArgs>
-      <SquirrelArgs>$(SquirrelArgs) -n &quot;/sm /sha1 5360f91887392ff0541964cd690ed60683f16b84 /fd sha256 /tr http://timestamp.digicert.com /td sha256&quot;</SquirrelArgs>
+      <SquirrelArgs>$(SquirrelArgs) -n &quot; /sha1 8d72fc3e61f4653dfd192baea0708186f05b163b /fd sha256 /tr http://timestamp.digicert.com /td sha256&quot;</SquirrelArgs>
       <SquirrelArgs>--releasify $(TargetDir)$(PackageId).$(PackageVersion).nupkg $(SquirrelArgs)</SquirrelArgs>
     </PropertyGroup>
     <Exec Command="$(NuGetPackageFolders)squirrel.windows\$(SquirrelVersion)\tools\squirrel.exe $(SquirrelArgs)" />
