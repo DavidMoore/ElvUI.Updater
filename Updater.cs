@@ -2,36 +2,30 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 using Squirrel;
 
-namespace SadRobot.ElvUI.Updater
+namespace SadRobot.ElvUI
 {
-    static class Program
+    class Updater
     {
         static readonly Regex regex = new Regex(@"/downloads/elvui-([0-9]+\.[0-9]+).zip");
-        
-        static void Main(string[] args)
-        {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            MainAsync().GetAwaiter().GetResult();
-        }
-        
-        static async Task MainAsync()
+
+        internal static async Task MainAsync(IProgress<UpdateProgress> progress)
         {
             try
             {
-                Console.WriteLine("Checking for program updates...");
+                progress.Report("Checking for program updates...");
                 using (var manager = await UpdateManager.GitHubUpdateManager("https://github.com/DavidMoore/ElvUI.Updater", "ElvUI Updater"))
                 {
                     if (manager.IsInstalledApp)
                     {
-                        await manager.UpdateApp(progress => Console.Write("\rUpdating: {0}%", progress));
-                        Console.WriteLine("\rUpdating: 100%");
+                        await manager.UpdateApp(x => progress.Report("Updating...", x));
+                        progress.Report("Updated.", 100);
                     }
                 }
             }
@@ -44,17 +38,19 @@ namespace SadRobot.ElvUI.Updater
             {
                 using (var client = new HttpClient())
                 {
-                    Console.WriteLine("\r\nChecking for ElVUI version...");
+                    progress.Report("Checking for ElVUI version...");
 
                     var html = await client.GetStringAsync("https://www.tukui.org/download.php?ui=elvui");
 
                     var match = regex.Match(html);
 
-                    Console.WriteLine("Latest ElVUI is " + match.Groups[1].Value);
+                    var version = match.Groups[1].Value;
+
+                    progress.Report("Latest ElVUI is " + version);
 
                     var link = "https://www.tukui.org" + match.Value;
 
-                    Console.WriteLine("Locating World of Warcraft...");
+                    progress.Report("Locating World of Warcraft...");
                     string installPath;
                     using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
                     using (var key = hklm.OpenSubKey(@"SOFTWARE\Blizzard Entertainment\World of Warcraft"))
@@ -74,7 +70,7 @@ namespace SadRobot.ElvUI.Updater
 
                     try
                     {
-                        Console.WriteLine("Downloading...");
+                        progress.Report("Downloading...");
 
                         var buffer = new byte[1024 * 64];
 
@@ -100,19 +96,18 @@ namespace SadRobot.ElvUI.Updater
 
                                     var downloadedMegs = bytesDownloaded / 1024 / 1024;
                                     var percent = (int)Math.Floor(bytesDownloaded / length * 100);
-                                    Console.Write("\rDownloaded {0:F2} MB of {1:F2} MB ({2}%)", downloadedMegs, lengthInMb, percent);
+                                    progress.Report("Downloaded {0:F2} MB of {1:F2} MB", percent, downloadedMegs, lengthInMb);
                                 }
                             }
 
-                            Console.WriteLine();
-                            Console.WriteLine("Finished downloading");
+                            progress.Report("Finished downloading", 100);
                         }
 
-                        Console.WriteLine("Cleaning out previous ElVUI");
+                        progress.Report("Cleaning out previous ElVUI");
                         if (Directory.Exists(elvuiFolder)) Directory.Delete(elvuiFolder, true);
                         if (Directory.Exists(elvuiConfigFolder)) Directory.Delete(elvuiConfigFolder, true);
 
-                        Console.WriteLine("Extracting...");
+                        progress.Report("Extracting...");
                         using (var zip = File.Open(temp, FileMode.Open, FileAccess.Read, FileShare.Read))
                         using (var archive = new ZipArchive(zip, ZipArchiveMode.Read, true))
                         {
@@ -150,7 +145,7 @@ namespace SadRobot.ElvUI.Updater
                             }
                         }
 
-                        Console.WriteLine("Finished updating");
+                        progress.Report("Finished updating to " + version);
                     }
                     finally
                     {
@@ -168,11 +163,21 @@ namespace SadRobot.ElvUI.Updater
                     }
                 }
             }
+            catch (AggregateException ae)
+            {
+                var sb = new StringBuilder().Append(ae.Message);
+
+                foreach (var exception in ae.InnerExceptions)
+                {
+                    Trace.TraceWarning(exception.ToString());
+                }
+
+                progress.Report(sb.ToString(), 100);
+            }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                Console.WriteLine("Press any key");
-                Console.ReadKey(true);
+                Trace.TraceWarning("There was a problem when updating: " + ex);
+                progress.Report("Error: " + ex.Message, 100);
             }
         }
     }
