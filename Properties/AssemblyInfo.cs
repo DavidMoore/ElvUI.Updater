@@ -29,9 +29,9 @@ using System.Windows;
 [assembly: AssemblyProduct("ElvUI Updater")]
 [assembly: AssemblyCopyright("Copyright © David Moore 2018")]
 [assembly: ComVisible(false)]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.5")]
-[assembly: AssemblyInformationalVersion("1.0.5")]
+[assembly: AssemblyVersion("0.9.0.0")]
+[assembly: AssemblyFileVersion("0.9.0")]
+[assembly: AssemblyInformationalVersion("0.9.0")]
 
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyTrademark("")]

@@ -21,6 +21,7 @@
         <file src="DeltaCompressionDotNet.PatchApi.dll" target="lib\net45" />
         <file src="ElvUI.exe" target="lib\net45" />
         <file src="ElvUI.exe.config" target="lib\net45" />
+        <file src="en-US\ElvUI.resources.dll" target="lib\net45\en-US" />
         <file src="Mono.Cecil.dll" target="lib\net45" />
         <file src="Mono.Cecil.Mdb.dll" target="lib\net45" />
         <file src="Mono.Cecil.Pdb.dll" target="lib\net45" />
