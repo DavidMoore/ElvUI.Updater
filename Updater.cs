@@ -38,7 +38,7 @@ namespace SadRobot.ElvUI
             {
                 using (var client = new HttpClient())
                 {
-                    progress.Report("Checking for ElVUI version...");
+                    progress.Report("Checking for ElvUI version...");
 
                     var html = await client.GetStringAsync("https://www.tukui.org/download.php?ui=elvui");
 
@@ -46,7 +46,7 @@ namespace SadRobot.ElvUI
 
                     var version = match.Groups[1].Value;
 
-                    progress.Report("Latest ElVUI is " + version);
+                    progress.Report("Latest ElvUI is " + version);
 
                     var link = "https://www.tukui.org" + match.Value;
 
@@ -103,7 +103,7 @@ namespace SadRobot.ElvUI
                             progress.Report("Finished downloading", 100);
                         }
 
-                        progress.Report("Cleaning out previous ElVUI");
+                        progress.Report("Cleaning out previous ElvUI");
                         if (Directory.Exists(elvuiFolder)) Directory.Delete(elvuiFolder, true);
                         if (Directory.Exists(elvuiConfigFolder)) Directory.Delete(elvuiConfigFolder, true);
 
@@ -145,7 +145,7 @@ namespace SadRobot.ElvUI
                             }
                         }
 
-                        progress.Report("Finished updating to " + version);
+                        progress.Report("Finished updating to " + version, 100);
                     }
                     finally
                     {
@@ -172,12 +172,12 @@ namespace SadRobot.ElvUI
                     Trace.TraceWarning(exception.ToString());
                 }
 
-                progress.Report(sb.ToString(), 100);
+                progress.Report(ae, sb.ToString(), 100);
             }
             catch (Exception ex)
             {
                 Trace.TraceWarning("There was a problem when updating: " + ex);
-                progress.Report("Error: " + ex.Message, 100);
+                progress.Report(ex, "Error: " + ex.Message, 100);
             }
         }
     }

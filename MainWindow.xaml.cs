@@ -9,9 +9,8 @@ namespace SadRobot.ElvUI
     {
         public MainWindow()
         {
-            ViewModel = new MainWindowViewModel();
-
             InitializeComponent();
+            ViewModel = new MainWindowViewModel();
         }
 
         public MainWindowViewModel ViewModel

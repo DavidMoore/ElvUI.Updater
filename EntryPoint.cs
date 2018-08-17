@@ -48,26 +48,24 @@ namespace SadRobot.ElvUI
                 return;
             }
 
-            var window = new MainWindow();
-            var app = new App();
-            app.Run(window);
+            new App().Run();
         }
 
-            static void OnProgressChanged(object sender, UpdateProgress model)
+        static void OnProgressChanged(object sender, UpdateProgress model)
+        {
+            if (model.Percent == -1)
             {
-                if (model.Percent == -1)
+                Trace.TraceInformation(model.Message);
+            }
+            else
+            {
+                // Skip over every 15%
+                if ((model.Percent % 15) == 0)
                 {
-                    Trace.TraceInformation(model.Message);
-                }
-                else
-                {
-                    // Skip over every 15%
-                    if ((model.Percent % 15) == 0)
-                    {
-                        Trace.TraceInformation($"{model.Percent} ({model.Percent}%)");
-                    }
+                    Trace.TraceInformation($"{model.Percent} ({model.Percent}%)");
                 }
             }
+        }
 
         static void OnUnhandledException(object sender, UnhandledExceptionEventArgs args)
         {

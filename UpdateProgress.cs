@@ -29,6 +29,7 @@ namespace SadRobot.ElvUI
         public int Percent { get; set; } = -1;
 
         public string Message { get;set; }
+        public Exception Exception { get; set; }
     }
 
     static class ProgressExtensions
@@ -37,6 +38,12 @@ namespace SadRobot.ElvUI
         {
             progress.Report(new UpdateProgress(message, percent));
         }
+        
+        public static void Report(this IProgress<UpdateProgress> progress, Exception ex, string message, int percent)
+        {
+            progress.Report(new UpdateProgress(message, percent){Exception = ex});
+        }
+
         public static void Report(this IProgress<UpdateProgress> progress, string message, int percent, double downloaded, double total)
         {
             progress.Report(new UpdateProgress(  string.Format(message, downloaded, total), percent, downloaded, total));

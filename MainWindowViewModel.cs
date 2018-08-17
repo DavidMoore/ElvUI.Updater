@@ -8,29 +8,45 @@ namespace SadRobot.ElvUI
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-
         int progressValue = -1;
         string statusText;
-        string buttonText = "OK";
+        string buttonText = "Update";
+
         readonly Progress<UpdateProgress> progress;
         CancellationTokenSource cancellationToken;
         bool progressIsIndeterminate;
+        ProgressState state;
 
         public MainWindowViewModel()
         {
             ProgressMin = 0;
             ProgressMax = 100;
             StartCommand = new DelegateCommand(Start, IsStartEnabled);
-            
+            State = ProgressState.Ready;
             progress = new Progress<UpdateProgress>(ProgressHandler);
             cancellationToken = new CancellationTokenSource();
         }
 
+        public ProgressState State
+        {
+            get => state;
+            set
+            {
+                if (state == value) return;
+                state = value;
+                OnPropertyChanged();
+                StartCommand.OnCanExecuteChanged();
+            }
+        }
+
         void Start(object state)
         {
+            if (State == ProgressState.Updating) return;
+
+            State = ProgressState.Updating;
             cancellationToken.Dispose();
             cancellationToken = new CancellationTokenSource();
-            Task.Factory.StartNew(StartAsync, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+            Task.Factory.StartNew(StartAsync, cancellationToken.Token, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         internal Task StartAsync()
@@ -40,8 +56,17 @@ namespace SadRobot.ElvUI
 
         bool IsStartEnabled(object state)
         {
-
-            return true;
+            switch (State)
+            {
+                case ProgressState.Ready:
+                case ProgressState.Error:
+                case ProgressState.Done:
+                    return true;
+                case ProgressState.Updating:
+                    return false;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         void ProgressHandler(UpdateProgress model)
@@ -58,6 +83,15 @@ namespace SadRobot.ElvUI
             {
                 ProgressValue = model.Percent;
                 ProgressIsIndeterminate = false;
+            }
+
+            if (model.Percent == 100)
+            {
+                State = model.Exception != null ? ProgressState.Done : ProgressState.Error;
+            }
+            else
+            {
+                State = ProgressState.Updating;
             }
         }
 
@@ -85,8 +119,6 @@ namespace SadRobot.ElvUI
                 OnPropertyChanged();
             }
         }
-
-
 
         public string StatusText
         {

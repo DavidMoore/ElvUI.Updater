@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <PackageId>ElvUIUpdater</PackageId>
-    <PackageVersion>0.9.0</PackageVersion>
+    <PackageVersion>0.9.1</PackageVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -71,6 +71,7 @@
     </ApplicationDefinition>
     <Compile Include="DelegateCommand.cs" />
     <Compile Include="MainWindowViewModel.cs" />
+    <Compile Include="ProgressState.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
