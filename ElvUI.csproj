@@ -51,6 +51,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -69,8 +71,34 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Deployment\ApplicationUpdater.cs" />
     <Compile Include="DelegateCommand.cs" />
+    <Compile Include="Deployment\ApplyUpdateArgs.cs" />
+    <Compile Include="Deployment\CleanupArgs.cs" />
+    <Compile Include="Deployment\Command.cs" />
+    <Compile Include="Deployment\Native\CShellLink.cs" />
+    <Compile Include="Deployment\InstallArgs.cs" />
+    <Compile Include="Deployment\Native\IPersist.cs" />
+    <Compile Include="Deployment\Native\IPersistFile.cs" />
+    <Compile Include="Deployment\Native\IShellLinkW.cs" />
+    <Compile Include="Deployment\LaunchArgs.cs" />
+    <Compile Include="Deployment\Native\PathHelper.cs" />
+    <Compile Include="Deployment\Native\ProcessInformation.cs" />
+    <Compile Include="Deployment\Native\ProcessManager.cs" />
+    <Compile Include="Deployment\Native\SafeLocalMemHandle.cs" />
+    <Compile Include="Deployment\Native\SecurityAttributes.cs" />
+    <Compile Include="Deployment\Native\StartupInfo.cs" />
+    <Compile Include="Deployment\Native\Win32Api.cs" />
+    <Compile Include="Deployment\SemanticVersion.cs" />
+    <Compile Include="Deployment\UninstallArgs.cs" />
+    <Compile Include="Deployment\TempFile.cs" />
+    <Compile Include="Deployment\UpdateCheckArgs.cs" />
+    <Compile Include="Deployment\UpdateInfo.cs" />
+    <Compile Include="Deployment\Native\_FILETIME.cs" />
+    <Compile Include="Deployment\Native\_WIN32_FIND_DATAW.cs" />
     <Compile Include="MainWindowViewModel.cs" />
+    <Compile Include="MessageBoxHelper.cs" />
+    <Compile Include="ProgressModel.cs" />
     <Compile Include="ProgressState.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -80,6 +108,7 @@
     <Compile Include="UpdateException.cs" />
     <Compile Include="UpdateProgress.cs" />
     <Compile Include="Updater.cs" />
+    <Compile Include="Deployment\CommandLineArguments.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -99,20 +128,12 @@
       <SubType>Code</SubType>
     </Compile>
     <None Include="app.manifest" />
-    <None Include="ElvUIUpdater.nuspec">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="squirrel.windows">
-      <Version>1.8.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ElvUI.ico" />
+    <Resource Include="..\..\ElvUI.ico" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -120,6 +141,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release'">
     <PropertyGroup>

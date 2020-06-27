@@ -1,8 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
+using SadRobot.ElvUI.Deployment;
 
 namespace SadRobot.ElvUI
 {
@@ -16,9 +20,11 @@ namespace SadRobot.ElvUI
         CancellationTokenSource cancellationToken;
         bool progressIsIndeterminate;
         ProgressState state;
+        readonly Dispatcher dispatcher;
 
         public MainWindowViewModel()
         {
+            dispatcher = Dispatcher.CurrentDispatcher;
             ProgressMin = 0;
             ProgressMax = 100;
             StartCommand = new DelegateCommand(Start, IsStartEnabled);
@@ -49,9 +55,44 @@ namespace SadRobot.ElvUI
             Task.Factory.StartNew(StartAsync, cancellationToken.Token, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        internal Task StartAsync()
+        internal async Task StartAsync()
         {
-            return Updater.MainAsync(progress);
+            var updater = new ApplicationUpdater();
+            var args = new UpdateCheckArgs
+            {
+                Uri = "https://api.github.com/repos/DavidMoore/ElvUI.Updater/releases",
+                AssetName = "elvui.exe",
+                AllowPreRelease = true
+            };
+
+            var update = await updater.CheckForUpdateAsync(args);
+
+            if (update != null)// && update.IsUpgrade())
+            {
+                if (MessageBoxHelper.Show(dispatcher, "Update Available", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes,
+                    "An update to version {0} is available. Would you like to update now?", update.Version) == MessageBoxResult.Yes)
+                {
+                    var pm = new Progress<ProgressModel>(model => progress.Report(model.Caption, model.Value));
+
+                    var result = await updater.DownloadAsync(update, pm);
+
+                    if (result != null)
+                    {
+                        // To overwrite self with new file, we need to re-launch
+                        var launchArgs = new LaunchArgs
+                        {
+                            Target = result.Filename,
+                            Args = " /launch"
+                        };
+
+                        await updater.LaunchAsync(launchArgs);
+                        Application.Current.Shutdown(0);
+                        return;
+                    }
+                }
+            }
+            
+            await Updater.MainAsync(progress);
         }
 
         bool IsStartEnabled(object state)

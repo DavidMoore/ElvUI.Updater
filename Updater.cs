@@ -6,8 +6,8 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using Microsoft.Win32;
-using Squirrel;
 
 namespace SadRobot.ElvUI
 {
@@ -17,23 +17,6 @@ namespace SadRobot.ElvUI
 
         internal static async Task MainAsync(IProgress<UpdateProgress> progress)
         {
-            try
-            {
-                progress.Report("Checking for program updates...");
-                using (var manager = await UpdateManager.GitHubUpdateManager("https://github.com/DavidMoore/ElvUI.Updater", "ElvUI Updater"))
-                {
-                    if (manager.IsInstalledApp)
-                    {
-                        await manager.UpdateApp(x => progress.Report("Updating...", x));
-                        progress.Report("Updated.", 100);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Trace.TraceWarning("\rError updating: " + e);
-            }
-
             try
             {
                 using (var client = new HttpClient())
