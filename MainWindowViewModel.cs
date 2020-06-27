@@ -67,7 +67,7 @@ namespace SadRobot.ElvUI
 
             var update = await updater.CheckForUpdateAsync(args);
 
-            if (update != null)// && update.IsUpgrade())
+            if (update != null && update.IsUpgrade())
             {
                 if (MessageBoxHelper.Show(dispatcher, "Update Available", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes,
                     "An update to version {0} is available. Would you like to update now?", update.Version) == MessageBoxResult.Yes)

@@ -8,13 +8,14 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
+using SadRobot.ElvUI.Deployment;
 
 namespace SadRobot.ElvUI
 {
     class Updater
     {
         static readonly Regex regex = new Regex(@"/downloads/elvui-([0-9]+\.[0-9]+).zip");
-
+        static readonly Regex versionRegex = new Regex(@"^## Version: ([0-9]+\.[0-9]+)$", RegexOptions.Multiline);
         internal static async Task MainAsync(IProgress<UpdateProgress> progress)
         {
             try
@@ -29,7 +30,9 @@ namespace SadRobot.ElvUI
 
                     var version = match.Groups[1].Value;
 
-                    progress.Report("Latest ElvUI is " + version);
+                    var latestVersion = new SemanticVersion(version);
+
+                    progress.Report("Latest ElvUI is " + latestVersion);
 
                     var link = "https://www.tukui.org" + match.Value;
 
@@ -48,6 +51,22 @@ namespace SadRobot.ElvUI
                     var addOnsPath = Path.Combine(installDirectory.FullName, @"Interface\AddOns\");
                     var elvuiFolder = Path.Combine(addOnsPath, "ElvUI");
                     var elvuiConfigFolder = elvuiFolder + "_Config";
+
+                    // Check the installed version of ElvUI
+                    var tocFile = new FileInfo(Path.Combine(elvuiFolder, "ElvUI.toc"));
+                    if (tocFile.Exists)
+                    {
+                        var existingVersionMatch = versionRegex.Match(File.ReadAllText(tocFile.FullName));
+                        if (existingVersionMatch.Success)
+                        {
+                            var existingVersion = new SemanticVersion(existingVersionMatch.Groups[1].Value);
+                            if (existingVersion >= latestVersion)
+                            {
+                                progress.Report("ElvUI is already up to date", 100);
+                                return;
+                            }
+                        }
+                    }
 
                     var temp = Path.GetTempFileName();
 
