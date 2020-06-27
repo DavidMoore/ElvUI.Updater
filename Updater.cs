@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 using System.Windows;
 using Microsoft.Win32;
 using SadRobot.ElvUI.Deployment;
@@ -16,6 +17,7 @@ namespace SadRobot.ElvUI
     {
         static readonly Regex regex = new Regex(@"/downloads/elvui-([0-9]+\.[0-9]+).zip");
         static readonly Regex versionRegex = new Regex(@"^## Version: ([0-9]+\.[0-9]+)$", RegexOptions.Multiline);
+
         internal static async Task MainAsync(IProgress<UpdateProgress> progress)
         {
             try
@@ -24,17 +26,16 @@ namespace SadRobot.ElvUI
                 {
                     progress.Report("Checking for ElvUI version...");
 
-                    var html = await client.GetStringAsync("https://www.tukui.org/download.php?ui=elvui");
-
-                    var match = regex.Match(html);
-
-                    var version = match.Groups[1].Value;
-
-                    var latestVersion = new SemanticVersion(version);
+                    // Get the API response for the ElvUI version and download uri
+                    var content = await client.GetStringAsync("https://www.tukui.org/api.php?ui=elvui");
+                    var serializer = new JavaScriptSerializer();
+                    var apiVersion = serializer.Deserialize<TukUi>(content);
+                    
+                    var latestVersion = new SemanticVersion(apiVersion.version);
 
                     progress.Report("Latest ElvUI is " + latestVersion);
 
-                    var link = "https://www.tukui.org" + match.Value;
+                    var link = apiVersion.url;
 
                     progress.Report("Locating World of Warcraft...");
                     string installPath;
@@ -147,7 +148,7 @@ namespace SadRobot.ElvUI
                             }
                         }
 
-                        progress.Report("Finished updating to " + version, 100);
+                        progress.Report("Finished updating to " + latestVersion, 100);
                     }
                     finally
                     {
@@ -181,6 +182,17 @@ namespace SadRobot.ElvUI
                 Trace.TraceWarning("There was a problem when updating: " + ex);
                 progress.Report(ex, "Error: " + ex.Message, 100);
             }
+        }
+
+        class TukUi
+        {
+            public string name { get; set; }
+
+            public string version { get; set; }
+
+            public Uri url { get; set; }
+
+            public Uri changelog { get; set; }
         }
     }
 }
