@@ -68,8 +68,6 @@ namespace SadRobot.ElvUI
             
             var cmd = new CommandLineArguments(args);
             
-            Debugger.Launch();
-
             if (cmd.Command != Command.None)
             {
                 return MainAsync(cmd).GetAwaiter().GetResult();
